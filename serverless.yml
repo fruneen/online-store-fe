@@ -7,7 +7,7 @@ provider:
   runtime: nodejs12.x
   region: eu-central-1
   # setup profile for AWS CLI.
-  profile: default
+  profile: personal
 
 plugins:
   - serverless-finch
