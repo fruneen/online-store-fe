@@ -15,7 +15,7 @@ import Grid from "@material-ui/core/Grid";
 import {TextField} from 'formik-material-ui';
 import axios from "axios";
 import API_PATHS from "constants/apiPaths";
-import {AddressSchema, OrderSchema} from "models/Order";
+import {AddressSchema} from "models/Order";
 
 const useStyles = makeStyles((theme) => ({
   stepper: {
@@ -111,18 +111,20 @@ export default function PageCart() {
   const [isFormValid, setIsFormValid] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setActiveStep(activeStep + 1);
+
     if (activeStep === 2) {
-      const formattedValues = OrderSchema.cast({
-        items: cartItems.map(i => ({productId: i.product.id, count: i.count})),
-        address
+      await axios.post(`${API_PATHS.cart}/profile/cart`,
+          { delivery: address },
+          {
+          headers: {
+              Authorization: `Basic ${localStorage.getItem('authorization_token')}`,
+          },
       });
-      axios.put(`${API_PATHS.order}/order`, formattedValues)
-        .then(() => {
-          dispatch(clearCart());
-          setActiveStep(activeStep + 1);
-        });
+
+      dispatch(clearCart());
+      setActiveStep(activeStep + 1);
     }
   };
 
