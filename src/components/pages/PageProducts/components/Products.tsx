@@ -35,20 +35,35 @@ const useStyles = makeStyles((theme) => ({
 export default function Products() {
   const classes = useStyles();
   const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    axios.get(`${API_PATHS.bff}/products`)
-        .then(res => setProducts(res.data));
+    axios.get(`${API_PATHS.bff}/product`)
+        .then(res => setProducts(res.data))
+        .catch(err => console.error(err))
+        .finally(() => setIsLoading(false));
   }, []);
 
   return (
     <Grid container spacing={4}>
-      {products.map((product: Product, index: number) => (
+      {isLoading
+          ? <div
+              style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '50vh',
+                  width: '100%',
+              }}
+          >
+            Loading...
+          </div>
+          : products.map((product: Product, index: number) => (
         <Grid item key={product.id} xs={12} sm={6} md={4}>
           <Card className={classes.card}>
             <CardMedia
               className={classes.cardMedia}
-              image={`https://source.unsplash.com/random?sig=${index}`}
+              image={product.photoUrl || `https://source.unsplash.com/random?sig=${index}`}
               title="Image title"
             />
             <CardContent className={classes.cardContent}>
